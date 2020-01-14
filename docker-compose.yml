@@ -1,0 +1,80 @@
+version: "2.3"
+services:
+  ghost-dev:
+    build:
+      context: ./
+    image: decomposed/ghost-dev-alpine:node12ghost3.3.0-f31a3387
+    container_name: ghost-dev
+    restart: unless-stopped
+    environment:
+      #- NODE_ENV=production
+      - url=https://${HOST_NAME:-localhost}
+    volumes:
+      - ghost-dev-data:/Ghost
+    networks:
+      - haven
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:${HOST_NAME:-localhost}"
+      - "traefik.port=2378"
+      - "traefik.docker.network=haven"
+      - "com.centurylinklabs.watchtower.enable=true"
+  # ghost-code:
+  #   command: ["--enable-proposed-api", "ms-vsliveshare.vsliveshare"]
+  #   security_opt:
+  #     - seccomp:unconfined
+  #   build:
+  #     context: ./
+  #     dockerfile: ./Dockerfile-coder
+  #
+  #     args:
+  #       - MAJOR_VERSION="2"
+  #       - vscodeVersion=1.41.1
+  #   image: onezoomin/code-server:v2 # or theiaide/theia
+  #   container_name: ghost-code
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ghost-dev-data:/home/coder/project # /home/project
+  #     # - code-server-data:/home/coder/.local/share/code-server # /home/project
+  #     - coder-home:/home/coder/
+  #     # add ssh keys securely https://code-maven.com/per-project-ssh-public-keys-git
+  #   networks:
+  #     - haven
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.frontend.rule=Host:code.onezoom.in"
+  #     - "traefik.port=8080" #3000 for theia
+  #     - "traefik.docker.network=haven"
+  #     - "traefik.frontend.auth.basic=${AUTH_STRING}"
+  # ghost:
+  #   image: devmtl/ghostfire:stable
+  #   container_name: ghost
+  #   restart: unless-stopped
+  #   networks:
+  #     - haven
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.frontend.rule=Host:onezoom.in,www.onezoom.in"
+  #     - "traefik.port=2368"
+  #     - "traefik.docker.network=haven"
+  #     - "com.centurylinklabs.watchtower.enable=true"
+  #   volumes:
+  #     - ./content:/var/lib/ghost/content
+  #     - ./config/config.production.json:/var/lib/ghost/config.production.json
+  #   environment:
+  #     - NODE_ENV=production
+  #     - url=https://${HOST_NAME:-localhost}
+
+networks:
+  haven: # this is the network name created by traefik
+    external: true
+
+volumes:
+  ghost-dev-data:
+    driver: local-persist # this is a plugin for docker
+    driver_opts:
+      mountpoint: ${SRV_PWD:-/srv}/ghost-dev-data
+  # coder-home:
+  #   driver: local-persist
+  #   driver_opts:
+  #     mountpoint: ${SRV_PWD:-/srv}/coder-home
