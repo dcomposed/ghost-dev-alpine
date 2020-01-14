@@ -9,8 +9,9 @@ RUN yarn global add knex-migrator grunt-cli ember-cli bower
 RUN mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 # First clone Ghost with submodules and make it your working dir (https://ghost.org/docs/install/source/#ghost-core)
-WORKDIR /
-RUN git clone --recurse-submodules https://github.com/TryGhost/Ghost
+RUN mkdir /Ghost
+WORKDIR /Ghost
+RUN git clone --recurse-submodules https://github.com/TryGhost/Ghost .
 
 
 ARG GITHUB_USERNAME=onezoomin

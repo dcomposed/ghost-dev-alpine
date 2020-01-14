@@ -1,10 +1,10 @@
 version: "2.3"
 services:
-  ghost-dev:
+  holodevshop-ghost-dev:
     build:
       context: ./
     image: decomposed/ghost-dev-alpine:node12ghost3.3.0-f31a3387
-    container_name: ghost-dev
+    container_name: holodevshop-ghost-dev
     restart: unless-stopped
     environment:
       #- NODE_ENV=production
