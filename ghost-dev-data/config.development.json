@@ -1,3 +1,7 @@
 {
-   "enableDeveloperExperiments": true
+  "enableDeveloperExperiments": true,
+  "server": {
+    "port": 2378,
+    "host": "0.0.0.0"
+  }
 }
